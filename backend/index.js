@@ -13,9 +13,11 @@ app.use(bodyParser.json());
 // app.use(cors());
 app.use(
   cors({
-    origin: 'https://qhn-rdm8.vercel.app/',
+    origin: 'https://qhn-rdm8.vercel.app',
   })
 );
+
+app.options('*', cors())
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
