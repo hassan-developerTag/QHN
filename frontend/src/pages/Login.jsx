@@ -31,7 +31,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.post("http://localhost:8000/auth/login", data);
+      const response = await axios.post("https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/login", data);
 
       if (response.data.success) {
         // Store user data

@@ -53,7 +53,7 @@ const DataRequests = () => {
     const fetchDataRequests = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:8000/auth/admin/getAllDataRequests"
+                "https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/getAllDataRequests"
             );
             const data = response.data.data;
             setDataRequests(data);
@@ -79,7 +79,7 @@ const DataRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `http://localhost:8000/auth/admin/approveDataRequest/${id}`
+                `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/approveDataRequest/${id}`
             );
             toast.success(response.data.message);
             fetchDataRequests();
@@ -94,7 +94,7 @@ const DataRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `http://localhost:8000/auth/admin/rejectDataRequest/${id}`
+                `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/rejectDataRequest/${id}`
             );
             toast.success(response.data.message);
             fetchDataRequests();

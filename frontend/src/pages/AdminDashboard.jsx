@@ -116,7 +116,7 @@ export default AdminDashboard;
 //     const fetchKycRequests = async () => {
 //         try {
 //             const response = await axios.get(
-//                 "http://localhost:8000/auth/admin/getAllKYC"
+//                 "https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/getAllKYC"
 //             );
 //             const data = response.data.data;
 //             setKycRequests(data);
@@ -146,7 +146,7 @@ export default AdminDashboard;
 //             // console.log(approve)
 //             setLoading(true);
 //             const response = await axios.put(
-//                 `http://localhost:8000/auth/admin/approveKYC/${id}`
+//                 `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/approveKYC/${id}`
 //             );
 
 //             toast.success(response.data.message);
@@ -164,7 +164,7 @@ export default AdminDashboard;
 //         try {
 //             setLoading(true);
 //             const response = await axios.put(
-//                 `http://localhost:8000/auth/admin/rejectKYC/${id}`
+//                 `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/rejectKYC/${id}`
 //             );
 
 //             toast.success(response.data.message);

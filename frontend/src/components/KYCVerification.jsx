@@ -68,7 +68,7 @@ const KYCVerification = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/postKYCDocuments",
+        "https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/postKYCDocuments",
         formData,
         {
           headers: {

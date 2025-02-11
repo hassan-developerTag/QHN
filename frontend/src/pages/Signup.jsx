@@ -50,7 +50,7 @@ const Signup = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/auth/signup",
+        "https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/signup",
         formData,
         {
           headers: {
@@ -69,6 +69,7 @@ const Signup = () => {
         navigate("/kycVerification");
       }
     } catch (error) {
+      console.log(error)
       toast.error(error.response?.data?.message || "Signup failed", {
         position: "top-right",
         autoClose: 2000,
