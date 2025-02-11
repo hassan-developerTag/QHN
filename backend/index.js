@@ -13,14 +13,11 @@ app.use(bodyParser.json());
 // app.use(cors());
 app.use(cors({
   origin: [
-    'http://localhost:5173',
-    'https://qhn-rdm8.vercel.app',
+    'http://localhost:5173/',
+    'https://qhn-rdm8.vercel.app/',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 600
 }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
