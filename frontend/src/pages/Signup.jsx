@@ -69,6 +69,7 @@ const Signup = () => {
         navigate("/kycVerification");
       }
     } catch (error) {
+      console.log(error)
       toast.error(error.response?.data?.message || "Signup failed", {
         position: "top-right",
         autoClose: 2000,
