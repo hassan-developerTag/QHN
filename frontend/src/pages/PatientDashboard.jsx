@@ -86,7 +86,7 @@ const PatientDashboard = () => {
     useEffect(() => {
         const fetchHealthData = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/auth/getHealthData', {
+                const response = await axios.get('https://qhn.vercel.app/auth/getHealthData', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -111,7 +111,7 @@ const PatientDashboard = () => {
         formData.append('file', file);
 
         try {
-            await axios.post('http://localhost:8000/auth/uploadHealthData', formData, {
+            await axios.post('https://qhn.vercel.app/auth/uploadHealthData', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
@@ -127,7 +127,7 @@ const PatientDashboard = () => {
             toast.success('Health data uploaded successfully!');
 
             // Refresh health data
-            const response = await axios.get('http://localhost:8000/auth/getHealthData', {
+            const response = await axios.get('https://qhn.vercel.app/auth/getHealthData', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -300,7 +300,7 @@ const PatientDashboard = () => {
                                                     case 'pdf':
                                                         return (
                                                             <embed
-                                                                src={`http://localhost:8000${filePath}`}
+                                                                src={`https://qhn.vercel.app${filePath}`}
                                                                 className="w-full h-[600px]"
                                                                 title="PDF viewer"
                                                             />
@@ -308,7 +308,7 @@ const PatientDashboard = () => {
                                                     case 'image':
                                                         return (
                                                             <img
-                                                                src={`http://localhost:8000${filePath}`}
+                                                                src={`https://qhn.vercel.app${filePath}`}
                                                                 alt="Uploaded file"
                                                                 className="max-w-full h-auto"
                                                             />
@@ -318,7 +318,7 @@ const PatientDashboard = () => {
                                                             <div className="text-center py-8">
                                                                 <p>This is a .docx file. You can download it:</p>
                                                                 <a
-                                                                    href={`http://localhost:8000${filePath}`}
+                                                                    href={`https://qhn.vercel.app${filePath}`}
                                                                     download
                                                                     className="text-blue-600 underline"
                                                                 >

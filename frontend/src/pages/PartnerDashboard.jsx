@@ -65,7 +65,7 @@ const PartnerDashboard = () => {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/auth/partner/getDataRequest', {
+                const response = await axios.get('https://qhn.vercel.app/auth/partner/getDataRequest', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -85,7 +85,7 @@ const PartnerDashboard = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:8000/auth/partner/postDataRequest',
+                'https://qhn.vercel.app/auth/partner/postDataRequest',
                 data,
                 {
                     headers: {
@@ -99,7 +99,7 @@ const PartnerDashboard = () => {
                 reset();
 
                 // Refresh requests list
-                const updatedRequests = await axios.get('http://localhost:8000/auth/partner/getDataRequest', {
+                const updatedRequests = await axios.get('https://qhn.vercel.app/auth/partner/getDataRequest', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
