@@ -10,15 +10,15 @@ require("./Models/db");
 const app = express();
 
 app.use(bodyParser.json());
-// app.use(cors());
-app.use(cors({
-  origin: [
-      'http://localhost:5173',  // Your local development URL
-      'https://your-frontend-domain.vercel.app' // Your production frontend URL
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-}));
+app.use(cors());
+// app.use(cors({
+//   origin: [
+//       'http://localhost:5173',  // Your local development URL
+//       'https://your-frontend-domain.vercel.app' // Your production frontend URL
+//   ],
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+// }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
