@@ -35,7 +35,7 @@ const KYCRequests = () => {
     const fetchKycRequests = async () => {
         try {
             const response = await axios.get(
-                "https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/getAllKYC"
+                "http://localhost:8000/auth/admin/getAllKYC"
             );
             const data = response.data.data;
             setKycRequests(data);
@@ -61,7 +61,7 @@ const KYCRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/approveKYC/${id}`
+                `http://localhost:8000/auth/admin/approveKYC/${id}`
             );
             toast.success(response.data.message);
             fetchKycRequests();
@@ -76,7 +76,7 @@ const KYCRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/admin/rejectKYC/${id}`
+                `http://localhost:8000/auth/admin/rejectKYC/${id}`
             );
             toast.success(response.data.message);
             fetchKycRequests();

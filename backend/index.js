@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const AuthRouter = require("./Routes/AuthRouter");
-const path = require("path");
+const path = require('path');
 
 require("dotenv").config();
 require("./Models/db");
@@ -10,40 +10,29 @@ require("./Models/db");
 const app = express();
 
 app.use(bodyParser.json());
-
 // app.use(cors());
-
-// app.use(cors({
-//   origin: [
-//     'http://localhost:5173/',
-//     'https://qhn-rdm8.vercel.app/',
-//   ],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-// }));
-
 app.use(
   cors({
-    origin: "*",
+    origin: 'https://qhn-rdm8.vercel.app/',
   })
 );
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API routes
 app.use("/auth", AuthRouter);
 
 // Serve static files from the dist folder
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "dist")));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
 
   // PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
-  app.get("/*", function (req, res) {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
+  app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
   });
 } else {
-  app.get("/", (req, res) => {
-    res.send("Hello World!");
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
   });
 }
 

@@ -86,7 +86,7 @@ const PatientDashboard = () => {
     useEffect(() => {
         const fetchHealthData = async () => {
             try {
-                const response = await axios.get('https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/getHealthData', {
+                const response = await axios.get('http://localhost:8000/auth/getHealthData', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -111,7 +111,7 @@ const PatientDashboard = () => {
         formData.append('file', file);
 
         try {
-            await axios.post('https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/uploadHealthData', formData, {
+            await axios.post('http://localhost:8000/auth/uploadHealthData', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
@@ -127,7 +127,7 @@ const PatientDashboard = () => {
             toast.success('Health data uploaded successfully!');
 
             // Refresh health data
-            const response = await axios.get('https://qhn-s4pw7mdah-hassan-mehmoods-projects-2e3cea23.vercel.app/auth/getHealthData', {
+            const response = await axios.get('http://localhost:8000/auth/getHealthData', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
