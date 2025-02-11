@@ -50,7 +50,7 @@ const Signup = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/auth/signup",
+        "https://qhn.vercel.app/auth/signup",
         formData,
         {
           headers: {
