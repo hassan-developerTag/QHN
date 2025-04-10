@@ -36,7 +36,10 @@ import {
     Wallet,
     CheckCircle2,
     XCircle,
-    LogOut
+    LogOut,
+    Shield,
+    AlertCircle,
+    Upload
 } from 'lucide-react';
 import LogoutButton from '../components/LogoutButton';
 
@@ -47,6 +50,10 @@ const PartnerDashboard = () => {
     });
     const [dataRequests, setDataRequests] = useState([]);
     const token = localStorage.getItem("token");
+    const [userData, setUserData] = useState({
+        name: '',
+        kycStatus: 'pending'
+    });
 
     const {
         control,
@@ -61,11 +68,30 @@ const PartnerDashboard = () => {
         }
     });
 
+    // Fetch user data including KYC status
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/v1/dataRequest/getUserData', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                setUserData(response.data.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                toast.error('Failed to fetch user profile');
+            }
+        };
+
+        fetchUserData();
+    }, [token]);
+
     // Fetch data requests
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await axios.get('https://qhn.vercel.app/auth/partner/getDataRequest', {
+                const response = await axios.get('http://localhost:8000/api/v1/dataRequest/partner/getDataRequest', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -85,7 +111,7 @@ const PartnerDashboard = () => {
 
         try {
             const response = await axios.post(
-                'https://qhn.vercel.app/auth/partner/postDataRequest',
+                'http://localhost:8000/api/v1/dataRequest/partner/postDataRequest',
                 data,
                 {
                     headers: {
@@ -99,7 +125,7 @@ const PartnerDashboard = () => {
                 reset();
 
                 // Refresh requests list
-                const updatedRequests = await axios.get('https://qhn.vercel.app/auth/partner/getDataRequest', {
+                const updatedRequests = await axios.get('http://localhost:8000/api/v1/dataRequest/partner/getDataRequest', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -127,13 +153,52 @@ const PartnerDashboard = () => {
         return variants[status] || null;
     };
 
+    // KYC Status helpers
+    const getKycStatusColor = (status) => {
+        switch(status) {
+            case 'approved':
+                return 'bg-green-50 text-green-600 border-green-100';
+            case 'rejected':
+                return 'bg-red-50 text-red-600 border-red-100';
+            case 'pending':
+            default:
+                return 'bg-yellow-50 text-yellow-600 border-yellow-100';
+        }
+    };
+
+    const getKycStatusIcon = (status) => {
+        switch(status) {
+            case 'approved':
+                return <Shield className="h-4 w-4 text-green-500" />;
+            case 'rejected':
+                return <AlertCircle className="h-4 w-4 text-red-500" />;
+            case 'pending':
+            default:
+                return <Clock className="h-4 w-4 text-yellow-500" />;
+        }
+    };
+
+    const getKycStatusText = (status) => {
+        switch(status) {
+            case 'approved':
+                return 'Your identity has been verified';
+            case 'rejected':
+                return 'Please resubmit your documents';
+            case 'pending':
+            default:
+                return 'Verification in progress';
+        }
+    };
+
+    const isKycApproved = userData.kycStatus === 'approved';
+
     return (
         <div className="max-w-7xl mx-auto space-y-6">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Partner Dashboard</h1>
-                    <p className="text-gray-500">Request access to anonymized health data</p>
+                    <p className="text-gray-500">Welcome, {userData.name || 'Partner'}</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <Card className="w-full md:w-auto">
@@ -151,6 +216,57 @@ const PartnerDashboard = () => {
                 </div>
             </div>
 
+            {/* KYC Status Card */}
+            <Card className="border border-gray-200">
+                <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
+                        <CardTitle>Identity Verification Status</CardTitle>
+                        {getKycStatusIcon(userData.kycStatus)}
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center mb-2">
+                        <Badge variant="outline" className={getKycStatusColor(userData.kycStatus)}>
+                            {userData.kycStatus.charAt(0).toUpperCase() + userData.kycStatus.slice(1)}
+                        </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600">{getKycStatusText(userData.kycStatus)}</p>
+                    
+                    {!isKycApproved && (
+                        <div className="mt-4">
+                            <div className={`p-4 rounded-lg ${userData.kycStatus === 'rejected' ? 'bg-red-50' : 'bg-yellow-50'}`}>
+                                <div className="flex items-start space-x-3">
+                                    {userData.kycStatus === 'rejected' ? (
+                                        <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                                    ) : (
+                                        <Clock className="h-5 w-5 text-yellow-500 mt-0.5" />
+                                    )}
+                                    <div>
+                                        <h4 className="font-medium text-sm">
+                                            {userData.kycStatus === 'rejected' 
+                                                ? 'Identity Verification Failed' 
+                                                : 'Identity Verification In Progress'}
+                                        </h4>
+                                        <p className="text-xs text-gray-600 mt-1">
+                                            {userData.kycStatus === 'rejected'
+                                                ? 'Your verification was rejected. Please upload clear and valid documents to complete the process.'
+                                                : 'Your verification is being reviewed. This process usually takes 1-2 business days.'}
+                                        </p>
+                                        
+                                        {userData.kycStatus === 'rejected' && (
+                                            <Button className="mt-2 text-xs px-3 py-1 h-auto" size="sm">
+                                                <Upload className="h-3 w-3 mr-1" />
+                                                Upload Documents
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+            
             {/* Status Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
@@ -202,108 +318,121 @@ const PartnerDashboard = () => {
                         <CardDescription>Submit a new request for health data access</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Data Type</label>
-                                <Controller
-                                    name="dataType"
-                                    control={control}
-                                    rules={{ required: 'Data type is required' }}
-                                    render={({ field }) => (
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                        >
-                                            <SelectTrigger className={errors.dataType ? "border-red-500" : ""}>
-                                                <SelectValue placeholder="Select data type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="clinical">Clinical Records</SelectItem>
-                                                <SelectItem value="diagnostic">Diagnostic Data</SelectItem>
-                                                <SelectItem value="laboratory">Laboratory Results</SelectItem>
-                                                <SelectItem value="imaging">Medical Imaging</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                        {isKycApproved ? (
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Data Type</label>
+                                    <Controller
+                                        name="dataType"
+                                        control={control}
+                                        rules={{ required: 'Data type is required' }}
+                                        render={({ field }) => (
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                            >
+                                                <SelectTrigger className={errors.dataType ? "border-red-500" : ""}>
+                                                    <SelectValue placeholder="Select data type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="clinical">Clinical Records</SelectItem>
+                                                    <SelectItem value="diagnostic">Diagnostic Data</SelectItem>
+                                                    <SelectItem value="laboratory">Laboratory Results</SelectItem>
+                                                    <SelectItem value="imaging">Medical Imaging</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+                                    {errors.dataType && (
+                                        <p className="text-sm text-red-500 mt-1">{errors.dataType.message}</p>
                                     )}
-                                />
-                                {errors.dataType && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.dataType.message}</p>
-                                )}
-                            </div>
+                                </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Research Purpose</label>
-                                <Controller
-                                    name="purpose"
-                                    control={control}
-                                    rules={{
-                                        required: 'Research purpose is required',
-                                        minLength: {
-                                            value: 50,
-                                            message: 'Please provide at least 50 characters'
-                                        }
-                                    }}
-                                    render={({ field }) => (
-                                        <Textarea
-                                            {...field}
-                                            placeholder="Describe your research purpose and data usage"
-                                            className={`h-32 ${errors.purpose ? "border-red-500" : ""}`}
-                                        />
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Research Purpose</label>
+                                    <Controller
+                                        name="purpose"
+                                        control={control}
+                                        rules={{
+                                            required: 'Research purpose is required',
+                                            minLength: {
+                                                value: 50,
+                                                message: 'Please provide at least 50 characters'
+                                            }
+                                        }}
+                                        render={({ field }) => (
+                                            <Textarea
+                                                {...field}
+                                                placeholder="Describe your research purpose and data usage"
+                                                className={`h-32 ${errors.purpose ? "border-red-500" : ""}`}
+                                            />
+                                        )}
+                                    />
+                                    {errors.purpose && (
+                                        <p className="text-sm text-red-500 mt-1">{errors.purpose.message}</p>
                                     )}
-                                />
-                                {errors.purpose && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.purpose.message}</p>
-                                )}
-                            </div>
+                                </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Payment Amount (QHT)</label>
-                                <Controller
-                                    name="paymentAmount"
-                                    control={control}
-                                    rules={{
-                                        required: 'Payment amount is required',
-                                        min: {
-                                            value: 100,
-                                            message: 'Minimum payment amount is 100 QHT'
-                                        },
-                                        max: {
-                                            value: qhtBalance,
-                                            message: `Maximum amount cannot exceed your balance of ${qhtBalance} QHT`
-                                        },
-                                        validate: (value) => value <= qhtBalance || `Amount cannot exceed your balance of ${qhtBalance} QHT`
-                                    }}
-                                    render={({ field }) => (
-                                        <Input
-                                            {...field}
-                                            type="number"
-                                            placeholder="Enter QHT amount"
-                                            className={errors.paymentAmount ? "border-red-500" : ""}
-                                            min="100"
-                                            max="10000"
-                                        />
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Payment Amount (QHT)</label>
+                                    <Controller
+                                        name="paymentAmount"
+                                        control={control}
+                                        rules={{
+                                            required: 'Payment amount is required',
+                                            min: {
+                                                value: 100,
+                                                message: 'Minimum payment amount is 100 QHT'
+                                            },
+                                            max: {
+                                                value: qhtBalance,
+                                                message: `Maximum amount cannot exceed your balance of ${qhtBalance} QHT`
+                                            },
+                                            validate: (value) => value <= qhtBalance || `Amount cannot exceed your balance of ${qhtBalance} QHT`
+                                        }}
+                                        render={({ field }) => (
+                                            <Input
+                                                {...field}
+                                                type="number"
+                                                placeholder="Enter QHT amount"
+                                                className={errors.paymentAmount ? "border-red-500" : ""}
+                                                min="100"
+                                                max="10000"
+                                            />
+                                        )}
+                                    />
+                                    {errors.paymentAmount && (
+                                        <p className="text-sm text-red-500 mt-1">{errors.paymentAmount.message}</p>
                                     )}
-                                />
-                                {errors.paymentAmount && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.paymentAmount.message}</p>
-                                )}
-                            </div>
+                                </div>
 
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <Clock className="mr-2 h-4 w-4 animate-spin" />
-                                        Submitting...
-                                    </>
-                                ) : (
-                                    'Submit Request'
-                                )}
-                            </Button>
-                        </form>
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Clock className="mr-2 h-4 w-4 animate-spin" />
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        'Submit Request'
+                                    )}
+                                </Button>
+                            </form>
+                        ) : (
+                            <div className="text-center py-8">
+                                <Shield className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                                <h3 className="text-lg font-medium text-gray-900 mb-1">KYC Verification Required</h3>
+                                <p className="text-sm text-gray-500 mb-4">
+                                    You need to complete identity verification before requesting data access.
+                                </p>
+                                <Button>
+                                    Complete Verification
+                                </Button>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 

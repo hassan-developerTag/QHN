@@ -53,7 +53,7 @@ const DataRequests = () => {
     const fetchDataRequests = async () => {
         try {
             const response = await axios.get(
-                "https://qhn.vercel.app/auth/admin/getAllDataRequests"
+                "http://localhost:8000/api/v1/dataRequest/admin/getAllDataRequests"
             );
             const data = response.data.data;
             setDataRequests(data);
@@ -79,7 +79,7 @@ const DataRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn.vercel.app/auth/admin/approveDataRequest/${id}`
+                `http://localhost:8000/api/v1/dataRequest/admin/approveDataRequest/${id}`
             );
             toast.success(response.data.message);
             fetchDataRequests();
@@ -94,7 +94,7 @@ const DataRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn.vercel.app/auth/admin/rejectDataRequest/${id}`
+                `http://localhost:8000/api/v1/dataRequest/admin/rejectDataRequest/${id}`
             );
             toast.success(response.data.message);
             fetchDataRequests();

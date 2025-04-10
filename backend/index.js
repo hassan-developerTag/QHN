@@ -1,45 +1,48 @@
-const express = require('express');
+const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const AuthRouter = require("./Routes/AuthRouter");
-const path = require('path');
+const path = require("path");
+const dotenv = require("dotenv");
+const routes = require("./routes");
 
-require("dotenv").config();
-require("./Models/db");
+// Load environment variables
+dotenv.config();
 
+// Import configurations
+const appConfig = require("./config/app.config");
+const connectDB = require("./config/db.config");
+
+// Initialize Express app
 const app = express();
 
+// Connect to database
+connectDB();
+
+// Middleware
 app.use(bodyParser.json());
-// app.use(cors());
-app.use(
-  cors({
-    origin: 'https://qhn-rdm8.vercel.app',
-  })
-);
+app.use(cors());
 
-app.options('*', cors())
+// Static file handling
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// API Routes
+app.use("/api/v1", routes);
 
-// API routes
-app.use("/auth", AuthRouter);
+// Serve frontend static files in production
+if (appConfig.app.env === "production") {
+  app.use(express.static(path.join(__dirname, "dist")));
 
-// Serve static files from the dist folder
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'dist')));
-
-  // PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
-  app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "dist", "index.html"));
   });
 } else {
-  app.get('/', (req, res) => {
-    res.send('Hello World!');
+  app.get("/", (req, res) => {
+    res.send("Hello World!");
   });
 }
 
-const port = process.env.PORT || 8080;
-
+// Start the server
+const port = appConfig.app.port;
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { IoEyeSharp, IoMailOutline, IoLockClosedOutline, IoLogoGoogle } from "react-icons/io5";
+import {
+  IoEyeSharp,
+  IoMailOutline,
+  IoLockClosedOutline,
+  IoLogoGoogle,
+} from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 const Login = () => {
@@ -31,7 +43,12 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.post("https://qhn.vercel.app/auth/login", data);
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/auth/login",
+        data
+      );
+
+      console.log(response)
 
       if (response.data.success) {
         // Store user data
@@ -40,16 +57,22 @@ const Login = () => {
         localStorage.setItem("email", response.data.email);
         localStorage.setItem("role", response.data.role);
 
-        toast.success('Successfully logged in!', {
+        toast.success("Successfully logged in!", {
           position: "top-right",
           autoClose: 2000,
           theme: "light",
         });
 
-        navigate("/dashboard");
+        if (response.data.kycStatus==='pending') {
+          navigate("/kycVerification");
+        } else if (response.data.role == "admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed', {
+      toast.error(error.response?.data?.message || "Login failed", {
         position: "top-right",
         autoClose: 2000,
         theme: "light",
@@ -70,14 +93,26 @@ const Login = () => {
                 <CardHeader className="space-y-1 p-0 mb-8">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-3xl font-bold">Welcome back</CardTitle>
+                      <CardTitle className="text-3xl font-bold">
+                        Welcome back
+                      </CardTitle>
                       <CardDescription className="text-gray-500">
                         Enter your credentials to access your account
                       </CardDescription>
                     </div>
                     <div className="h-12 w-12">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-12 w-12 text-green-600">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        className="h-12 w-12 text-green-600"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -92,7 +127,9 @@ const Login = () => {
                         id="email"
                         type="email"
                         placeholder="Enter your email"
-                        className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
+                        className={`pl-10 ${
+                          errors.email ? "border-red-500" : ""
+                        }`}
                         {...register("email", {
                           required: "Email is required",
                           pattern: {
@@ -103,7 +140,9 @@ const Login = () => {
                       />
                     </div>
                     {errors.email && (
-                      <p className="text-sm text-red-500">{errors.email.message}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
 
@@ -127,7 +166,9 @@ const Login = () => {
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
-                        className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
+                        className={`pl-10 ${
+                          errors.password ? "border-red-500" : ""
+                        }`}
                         {...register("password", {
                           required: "Password is required",
                           minLength: {
@@ -149,7 +190,9 @@ const Login = () => {
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password.message}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.password.message}
+                      </p>
                     )}
                   </div>
 
@@ -160,9 +203,25 @@ const Login = () => {
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Signing in...
                       </div>
@@ -173,7 +232,10 @@ const Login = () => {
 
                   <p className="text-center text-sm text-gray-600">
                     Don't have an account?{" "}
-                    <Link to="/signup" className="text-green-500 hover:underline font-medium">
+                    <Link
+                      to="/signup"
+                      className="text-green-500 hover:underline font-medium"
+                    >
                       Sign up
                     </Link>
                   </p>
@@ -184,48 +246,84 @@ const Login = () => {
             {/* Right Side: Brand Message */}
             <div className="w-full lg:w-1/2 bg-gradient-to-br from-green-600 to-green-800 p-8 lg:p-12 flex items-center">
               <div className="w-full text-white">
-                <h1 className="text-4xl font-bold mb-6">Quantum Health Networks</h1>
+                <h1 className="text-4xl font-bold mb-6">
+                  Quantum Health Networks
+                </h1>
                 <p className="text-xl text-blue-100 mb-8">
-                  Access your healthcare dashboard and manage your medical records securely.
+                  Access your healthcare dashboard and manage your medical
+                  records securely.
                 </p>
 
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
                     <div className="bg-white/10 p-3 rounded-lg">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        />
                       </svg>
                     </div>
                     <div>
                       <h3 className="font-semibold">Secure Platform</h3>
-                      <p className="text-blue-100 text-sm">Your data is protected with enterprise-grade security</p>
+                      <p className="text-blue-100 text-sm">
+                        Your data is protected with enterprise-grade security
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-4">
                     <div className="bg-white/10 p-3 rounded-lg">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
                       </svg>
                     </div>
                     <div>
                       <h3 className="font-semibold">Digital Records</h3>
-                      <p className="text-blue-100 text-sm">Access your medical history anytime, anywhere</p>
+                      <p className="text-blue-100 text-sm">
+                        Access your medical history anytime, anywhere
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-4">
                     <div className="bg-white/10 p-3 rounded-lg">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+                        />
                       </svg>
                     </div>
                     <div>
                       <h3 className="font-semibold">24/7 Support</h3>
-                      <p className="text-blue-100 text-sm">Get help whenever you need it</p>
+                      <p className="text-blue-100 text-sm">
+                        Get help whenever you need it
+                      </p>
                     </div>
                   </div>
                 </div>

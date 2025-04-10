@@ -68,7 +68,7 @@ const KYCVerification = () => {
 
     try {
       const response = await axios.post(
-        "https://qhn.vercel.app/auth/postKYCDocuments",
+        "http://localhost:8000/api/v1/kycDocument/postKYCDocuments",
         formData,
         {
           headers: {
@@ -85,7 +85,7 @@ const KYCVerification = () => {
           theme: "light",
         });
         setDocuments([]);
-        navigate("/login")
+        navigate("/dashboard")
       }
 
     } catch (error) {

@@ -35,7 +35,7 @@ const KYCRequests = () => {
     const fetchKycRequests = async () => {
         try {
             const response = await axios.get(
-                "https://qhn.vercel.app/auth/admin/getAllKYC"
+                "http://localhost:8000/api/v1/kycDocument/admin/getAllKYC"
             );
             const data = response.data.data;
             setKycRequests(data);
@@ -61,7 +61,7 @@ const KYCRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn.vercel.app/auth/admin/approveKYC/${id}`
+                `http://localhost:8000/api/v1/kycDocument/admin/approveKYC/${id}`
             );
             toast.success(response.data.message);
             fetchKycRequests();
@@ -76,7 +76,7 @@ const KYCRequests = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://qhn.vercel.app/auth/admin/rejectKYC/${id}`
+                `http://localhost:8000/api/v1/kycDocument/admin/rejectKYC/${id}`
             );
             toast.success(response.data.message);
             fetchKycRequests();

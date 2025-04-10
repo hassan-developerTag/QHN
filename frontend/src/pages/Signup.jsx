@@ -50,7 +50,7 @@ const Signup = () => {
       }
 
       const response = await axios.post(
-        "https://qhn.vercel.app/auth/signup",
+        "http://localhost:8000/api/v1/auth/signup",
         formData,
         {
           headers: {
@@ -59,16 +59,17 @@ const Signup = () => {
         }
       );
 
-      console.log(response)
-
+      
       if (response.data.success) {
+        // console.log(response)
         toast.success(response.data.message, {
           position: "top-right",
           autoClose: 2000,
           theme: "light",
         });
 
-        navigate("/kycVerification");
+        // navigate("/login");
+        navigate("/login", { state: { fromSignup: true } });
       }
     } catch (error) {
       console.log(error)
